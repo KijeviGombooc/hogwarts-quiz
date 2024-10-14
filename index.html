@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harry Potter Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Almendra&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="authForm" class="authForm">
+        <h2>Sign In</h2>
+        <p id="authError" class="authError"></p>
+        <button id="signInButton">Sign In</button>
+    </div>
+    <div id="secretContent" class="secretContent" style="display: none;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Hogwarts-Crest.png" alt="Hogwarts Crest">
+        <h1>Harry Potter Quiz</h1>
+        <button id="signOutButton">Sign Out</button>
+        <form id="quizForm">
+            <h3>Enter your wizard name:</h3>
+            <h5>(Please give your real name!)</h5>
+            <input type="text" id="wizardName" placeholder="Your wizard name" required class="question">
+            <div id="optionsHolder"></div>
+            <button type="button" onclick="submitQuiz()">Submit</button>
+        </form>
+        <p id="result"></p>
+    </div>
+
+    <script type="module" src="auth.js"></script>
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
