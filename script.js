@@ -1,44 +1,62 @@
-data.forEach(questionData => {
-    let questionDiv = document.createElement("div")
-    questionDiv.classList.add("question")
+import { addData } from './firebase-firestore.js';
 
-    let questionH3 = document.createElement("h3")
-    questionH3.textContent = questionData.title
-    questionDiv.appendChild(questionH3)
-    questionData.answers.forEach(answerData => {
-        let answerLabel = document.createElement("label")
-        let answerInput = document.createElement("input")
-        answerInput.type = "radio"
-        answerInput.name = questionData.title
-        answerInput.value = answerData.text
-        let answerSpan = document.createElement("span")
-        answerSpan.classList.add("option")
-        answerSpan.textContent = answerData.text
-        answerLabel.appendChild(answerInput)
-        answerLabel.appendChild(answerSpan)
-        questionDiv.appendChild(answerLabel)
-    });
-    optionsHolder.appendChild(questionDiv)
-});
+for (let questionIndex = 0; questionIndex < data.length; questionIndex++) {
+    const questionData = data[questionIndex];
+    let questionDiv = document.createElement("div");
+    questionDiv.classList.add("question");
+    let questionH3 = document.createElement("h3");
+    questionH3.textContent = questionData.title;
+    questionDiv.appendChild(questionH3);
+    for (let answerIndex = 0; answerIndex < questionData.answers.length; answerIndex++) {
+        let answerData = questionData.answers[answerIndex];
+        let answerLabel = document.createElement("label");
+        let answerInput = document.createElement("input");
+        answerInput.type = "radio";
+        answerInput.name = "question" + questionIndex;
+        answerInput.value = answerIndex;
+        let answerSpan = document.createElement("span");
+        answerSpan.classList.add("option");
+        answerSpan.textContent = answerData.text;
+        answerLabel.appendChild(answerInput);
+        answerLabel.appendChild(answerSpan);
+        questionDiv.appendChild(answerLabel);
+    }
+    optionsHolder.appendChild(questionDiv);
+}
 
+let resultText = document.getElementById("result");
 
 function submitQuiz() {
     const quizForm = document.getElementById('quizForm');
-    const formData = new FormData(quizForm);
+    const inputs = quizForm.querySelectorAll('input[type="text"], input[type="radio"]');
     let allAnswered = true;
 
     // Clear previous highlights
     const questions = quizForm.querySelectorAll('.question');
+    resultText.textContent = "";
+    resultText.style.color = 'green';
     questions.forEach(question => {
         question.style.border = 'none';
     });
 
-    // Check if all questions have been answered and highlight if not
-    for (let i = 1; i <= 4; i++) {
-        if (!formData.has(`question${i}`)) {
+    // Collect radiobutton groups
+    const radioGroups = {};
+    inputs.forEach(input => {
+        if (input.type === 'radio') {
+            if (!radioGroups[input.name]) {
+                radioGroups[input.name] = [];
+            }
+            radioGroups[input.name].push(input);
+        }
+    });
+    // check if groups have been answered
+    for (const groupName in radioGroups) {
+        const group = radioGroups[groupName];
+        console.log(typeof (group));
+        const isSelected = group.some(input => input.checked);
+        if (!isSelected) {
             allAnswered = false;
-            // Highlight the unanswered question
-            const questionDiv = document.querySelector(`.question:nth-of-type(${i})`);
+            const questionDiv = group[0].closest('.question');
             if (questionDiv) {
                 questionDiv.style.border = '2px solid red';
             }
@@ -46,26 +64,21 @@ function submitQuiz() {
     }
 
     if (!allAnswered) {
-        document.getElementById('result').innerText = 'Please answer all questions before submitting.';
+        resultText.textContent = "Please answer all questions";
+        resultText.style.color = 'red';
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         return;
     }
 
-    let quizResults = '';
+    const formData = new FormData(quizForm);
+    let results = {};
     for (let [key, value] of formData.entries()) {
-        quizResults += `${key}: ${value}\n`;
+        results[key] = value;
     }
 
-    sendEmail(quizResults);
+    addData(results);
+    resultText.textContent = "Successfully submitted!";
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 }
 
-function sendEmail(results) {
-    emailjs.send("service_harrypotter", "harrypotter_template", {
-        quiz_results: results
-    })
-        .then(function (response) {
-            document.getElementById('result').innerText = 'Quiz submitted successfully! You are a true wizard!';
-        }, function (error) {
-            document.getElementById('result').innerText = 'There was an error submitting the quiz. Maybe a Muggle is to blame.';
-            console.error('Email sending error:', error);
-        });
-}
+submitButton.addEventListener('click', submitQuiz);

@@ -1,5 +1,3 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics.js";
 import {
     getAuth,
     GoogleAuthProvider,
@@ -7,27 +5,17 @@ import {
     onAuthStateChanged,
     signOut
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-const firebaseConfig = {
-    apiKey: "AIzaSyARWO8_HF2geiFSH__xHPdwB7LaBBZ15aQ",
-    authDomain: "hogwarts-quiz-a6974.firebaseapp.com",
-    projectId: "hogwarts-quiz-a6974",
-    storageBucket: "hogwarts-quiz-a6974.appspot.com",
-    messagingSenderId: "646239438739",
-    appId: "1:646239438739:web:d472cd1ae57d138534ca66",
-    measurementId: "G-68Y7DPTV1R"
-};
+import { app } from "./firebase-common.js";
 
-const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const authForm = document.getElementById("authForm");
-const secretContent = document.getElementById("secretContent");
 const googleAuthProvider = new GoogleAuthProvider();
 googleAuthProvider.setCustomParameters({
     prompt: 'select_account'
 });
+const authForm = document.getElementById("authForm");
+const secretContent = document.getElementById("secretContent");
+
 const signInButton = document.getElementById("signInButton");
 const signOutButton = document.getElementById("signOutButton");
 const authError = document.getElementById("authError");
@@ -45,6 +33,8 @@ const userSignIn = async () => {
 signInButton.addEventListener("click", userSignIn);
 
 const userSignOut = async () => {
+    // addData();
+    // return;
     try {
         await signOut(auth);
     } catch (error) {
@@ -53,12 +43,18 @@ const userSignOut = async () => {
 };
 signOutButton.addEventListener("click", userSignOut);
 
+var userId
+
 onAuthStateChanged(auth, user => {
     if (user) {
         authForm.style.display = "none";
         secretContent.style.display = "block";
+        userId = user.uid;
     } else {
         authForm.style.display = "block";
         secretContent.style.display = "none";
+        userId = null;
     }
 })
+
+export { userId };

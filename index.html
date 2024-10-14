@@ -18,20 +18,23 @@
     <div id="secretContent" class="secretContent" style="display: none;">
         <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Hogwarts-Crest.png" alt="Hogwarts Crest">
         <h1>Harry Potter Quiz</h1>
-        <button id="signOutButton">Sign Out</button>
+        <button class="top-right" id="signOutButton">Sign Out</button>
+        <br><br>
         <form id="quizForm">
-            <h3>Enter your wizard name:</h3>
+            <!-- <h3>Enter your wizard name:</h3>
             <h5>(Please give your real name!)</h5>
-            <input type="text" id="wizardName" placeholder="Your wizard name" required class="question">
+            <input type="text" id="wizardName" placeholder="Your wizard name" required class="question"> -->
             <div id="optionsHolder"></div>
-            <button type="button" onclick="submitQuiz()">Submit</button>
+            <p id="result"></p>
+            <button id="submitButton" type="button">Submit</button>
         </form>
-        <p id="result"></p>
     </div>
 
-    <script type="module" src="auth.js"></script>
+    <script type="module" src="firebase-common.js"></script>
+    <script type="module" src="firebase-auth.js"></script>
+    <script type="module" src="firebase-firestore.js"></script>
     <script src="data.js"></script>
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 
 </html>
