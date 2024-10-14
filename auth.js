@@ -25,6 +25,9 @@ const auth = getAuth(app);
 const authForm = document.getElementById("authForm");
 const secretContent = document.getElementById("secretContent");
 const googleAuthProvider = new GoogleAuthProvider();
+googleAuthProvider.setCustomParameters({
+    prompt: 'select_account'
+});
 const signInButton = document.getElementById("signInButton");
 const signOutButton = document.getElementById("signOutButton");
 const authError = document.getElementById("authError");
@@ -36,6 +39,7 @@ const userSignIn = async () => {
     } catch (error) {
         console.log(error);
         authError.textContent = error.message;
+        signOut(auth);
     }
 }
 signInButton.addEventListener("click", userSignIn);
